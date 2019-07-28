@@ -1,8 +1,36 @@
 <html>
 <title>Graphs</title>
+
+<!--
+<form action="/" method="POST">
+  <label for="name">Digit to be generated: </label>
+  <input type="text" name="digit">
+  <input type="submit" value="Send">
+
+</form> -->
+
+  <!-- <form action="/" method="POST">
+
+  <label for="name">How confidently: </label>
+  <input type="text" name="confidence">
+  <input type="submit" value="Send">
+</form> -->
+<form method=post action="">
+<table>
+  {% for field in form %}
+    <tr>
+    <td>{{ field.name }}</td><td>{{ field }}</td>
+    <td>{{ field.label }}</td>
+    </tr>
+  {% endfor %}
+</table>
+<p><input type=submit value=GENERATE!!></form></p>
+
+
 <body>
   <div> Confidence that the number generated looks good: {{ prob }}</div>
   <div> Number of tries the generator tried to get above the threshold confidence: {{ i }}</div>
-    <div><img src = '{{ graph1 }}'></img></div>
+  <div> Digit to be generated: {{ digit }}</div>
+<div><img src = '{{ graph1 }}'></img></div>
 </body>
 </html>

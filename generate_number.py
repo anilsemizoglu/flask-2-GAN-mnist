@@ -7,7 +7,6 @@ import base64
 
 import time
 import pickle
-import matplotlib.pyplot as plt
 import keras
 from keras import backend as K
 # from keras.models import Sequential
@@ -17,9 +16,19 @@ from keras import backend as K
 # from keras.layers import BatchNormalization
 # from keras.optimizers import Adam, RMSprop
 
-import os
 
-os.environ['KMP_DUPLICATE_LIB_OK']='True'
+import matplotlib.pyplot as plt
+
+from wtforms import Form, FloatField, validators
+
+class InputForm(Form):
+    digit = FloatField(
+        label='digit to be generated[0 - 9]', default=7,
+        validators=[validators.InputRequired()])
+    confidence = FloatField(
+        label='confidence greater than in the quality of the generated digit [0.01 - 0.999999]', default=.99,
+        validators=[validators.InputRequired()])
+
 
 def load_generator():
     with open('GAN-models/generator_model (1).pkl', 'rb') as handle:
@@ -32,11 +41,25 @@ def load_discriminator():
     return discriminator_model
 
 def load_reality_check():
-    with open('GAN-models/mnist_model.pkl', 'rb') as handle:
+    with open('GAN-models/mnist_model-2.pkl', 'rb') as handle:
         mnist_model = pickle.load(handle)
     return mnist_model
 
-def generate_num():
+def convert_numpy_to_url(array):
+    fig, ax = plt.subplots()
+    ax.imshow(array.reshape(28,28),cmap='binary')
+    fig.patch.set_visible(False)
+    ax.axis('off')
+
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    url = base64.b64encode(img.getvalue()).decode()
+    plt.close()
+    return url
+
+def generate_num(digit=7,confidence=0.99):
+    digit = int(digit)
     K.clear_session()
 
     generator_model = load_generator()
@@ -52,7 +75,7 @@ def generate_num():
     save_prob = 0
     # try 2000 times until we get to 0.9999 confidence level
     for _ in range(1000):
-        if save_prob < 0.99999:
+        if save_prob < confidence:
             n_tries = n_tries+1
             noise_plot = np.random.uniform(-1.0, 1.0, size=[1,100])
 
@@ -63,7 +86,7 @@ def generate_num():
             num = generator_model.predict(noise_plot)
             a = discriminator_model.predict(num)
             probability_all = mnist_model.predict(num)
-            prob = probability_all[0][4]
+            prob = probability_all[0][digit]
         # in case we find a good number in the first try
         if n_tries == 1:
             save_prob = prob
@@ -77,12 +100,7 @@ def generate_num():
             save_a = a
             save_probability_all = probability_all
 
-    img = io.BytesIO()
-    plt.imshow(save_num.reshape(28,28),cmap='binary')
-    plt.savefig(img, format='png')
-    img.seek(0)
-    graph_url = base64.b64encode(img.getvalue()).decode()
-    plt.close()
+    graph_url = convert_numpy_to_url(save_num)
 
     K.clear_session()
     return 'data:image/png;base64,{}'.format(graph_url), save_prob, n_tries
