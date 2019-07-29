@@ -1,36 +1,80 @@
-<html>
-<title>Graphs</title>
 
-<!--
-<form action="/" method="POST">
-  <label for="name">Digit to be generated: </label>
-  <input type="text" name="digit">
-  <input type="submit" value="Send">
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Mnist Digit reader</title>
 
-</form> -->
-
-  <!-- <form action="/" method="POST">
-
-  <label for="name">How confidently: </label>
-  <input type="text" name="confidence">
-  <input type="submit" value="Send">
-</form> -->
-<form method=post action="">
-<table>
-  {% for field in form %}
-    <tr>
-    <td>{{ field.name }}</td><td>{{ field }}</td>
-    <td>{{ field.label }}</td>
-    </tr>
-  {% endfor %}
-</table>
-<p><input type=submit value=GENERATE!!></form></p>
+  <!-- Latest Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="static/css/styles.css" />
 
 
-<body>
-  <div> Confidence that the number generated looks good: {{ prob }}</div>
-  <div> Number of tries the generator tried to get above the threshold confidence: {{ i }}</div>
-  <div> Digit to be generated: {{ digit }}</div>
-<div><img src = '{{ graph1 }}'></img></div>
-</body>
+
+</head>
+
+<!-- <title>Graphs</title> -->
+
+<!-- <body> -->
+  <!-- <div class="prob_"> Confidence that the number generated looks good: {{ prob }}</div> -->
+  <!-- <div> Number of tries the generator tried to get above the threshold confidence: {{ i }}</div> -->
+  <!-- <div> Digit to be generated: {{ digit }}</div> -->
+
+  <body>
+              <!-- NAVAGATION BAR -->
+
+
+          <div id="mainContent" class="jumbotron">
+                  <div class="row col-xs-12">
+                      <!-- <div class="col-xs-1"></div> -->
+                              <div class="navbar-header">
+                                  <p class="navbar-text">Mnist Digit Generator</p>
+                              </div>
+                              <div class="footer">
+                                  Author: Anil Semizoglu
+                                  <br/>
+                                  <a href="https://github.com/anilsemizoglu/flask-2-GAN-mnist">
+                                      <img src="./images/GitHub-Mark-32px.png" width="16" height="16"> Visit GitHub Repo
+                                  </a>
+                              </div>
+
+                  </div>
+
+
+
+
+
+          </div>
+
+
+      </div>
+
+  </body>
+
+  <form id="calc">
+  <label>digit <input name="digit"></label>
+  <label>confidence <input name="confidence"></label>
+  <input type="submit" value="Generate">
+</form>
+
+<span>= <span id="result"></span></span>
+
+
+<img id="imgElem" src="data:image/png;base64,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"/>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+  function addSubmit(ev) {
+    ev.preventDefault();
+    $.ajax({
+      method: 'POST',
+      url: {{ url_for('generate_random_number')|tojson }},
+      data: $(this).serialize()
+    }).done(addShow);
+  }
+  function addShow(data) {
+    $('#imgElem').attr("src",data.result);
+  }
+  $('#calc').on('submit', addSubmit);
+</script>
+
 </html>
