@@ -10,10 +10,7 @@ from generate_number import generate_num, InputForm
 
 app = Flask(__name__)
 
-# @app.route('/')
-# def hello_world2():
-#
-#     return render_template('graphs.html')
+
 @app.route('/')
 def index():
     return render_template('graphs.html')
