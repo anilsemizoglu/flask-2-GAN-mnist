@@ -58,7 +58,8 @@ def convert_numpy_to_url(array):
     plt.close()
     return url
 
-def generate_num(digit=7,confidence=0.99):
+def generate_num(digit=7,confidence=0.001):
+    print('hello')
     digit = int(digit)
     K.clear_session()
 
